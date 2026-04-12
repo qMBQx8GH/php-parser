@@ -6,6 +6,204 @@ import (
 	"github.com/Demooon86/php-parser/internal/tester"
 )
 
+func TestPropertyHooksGetSet(t *testing.T) {
+	suite := tester.NewParserDumpTestSuite(t)
+	suite.UsePHP84()
+	suite.Code = `<?php
+		class Example
+		{
+		    public string $foo = 'default value' {
+		        get {
+		            return $this->foo;
+		        }
+
+		        set(string $value) {
+		            $this->foo = strtolower($value);
+		        }
+		    }
+		}
+    `
+
+	suite.Expected = `&ast.Root{
+	Stmts: []ast.Vertex{
+		&ast.StmtClass{
+			Name: &ast.Identifier{
+				Val: []byte("Example"),
+			},
+			Stmts: []ast.Vertex{
+				&ast.StmtPropertyList{
+					Modifiers: []ast.Vertex{
+						&ast.Identifier{
+							Val: []byte("public"),
+						},
+					},
+					Type: &ast.Name{
+						Parts: []ast.Vertex{
+							&ast.NamePart{
+								Val: []byte("string"),
+							},
+						},
+					},
+					Props: []ast.Vertex{
+						&ast.StmtProperty{
+							Var: &ast.ExprVariable{
+								Name: &ast.Identifier{
+									Val: []byte("$foo"),
+								},
+							},
+							Expr: &ast.ScalarString{
+								Val: []byte("'default value'"),
+							},
+							Hooks: []ast.Vertex{
+								&ast.StmtPropertyHook{
+									Stmts: []ast.Vertex{
+										&ast.StmtReturn{
+											Expr: &ast.ExprPropertyFetch{
+												Var: &ast.ExprVariable{
+													Name: &ast.Identifier{
+														Val: []byte("$this"),
+													},
+												},
+												Prop: &ast.Identifier{
+													Val: []byte("foo"),
+												},
+											},
+										},
+									},
+								},
+								&ast.StmtPropertyHook{
+									Params: []ast.Vertex{
+										&ast.Parameter{
+											Type: &ast.Name{
+												Parts: []ast.Vertex{
+													&ast.NamePart{
+														Val: []byte("string"),
+													},
+												},
+											},
+											Var: &ast.ExprVariable{
+												Name: &ast.Identifier{
+													Val: []byte("$value"),
+												},
+											},
+										},
+									},
+									Stmts: []ast.Vertex{
+										&ast.StmtExpression{
+											Expr: &ast.ExprAssign{
+												Var: &ast.ExprPropertyFetch{
+													Var: &ast.ExprVariable{
+														Name: &ast.Identifier{
+															Val: []byte("$this"),
+														},
+													},
+													Prop: &ast.Identifier{
+														Val: []byte("foo"),
+													},
+												},
+												Expr: &ast.ExprFunctionCall{
+													Function: &ast.Name{
+														Parts: []ast.Vertex{
+															&ast.NamePart{
+																Val: []byte("strtolower"),
+															},
+														},
+													},
+													Args: []ast.Vertex{
+														&ast.Argument{
+															Expr: &ast.ExprVariable{
+																Name: &ast.Identifier{
+																	Val: []byte("$value"),
+																},
+															},
+														},
+													},
+												},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+},`
+
+	suite.Run()
+}
+
+func TestPropertyHooksGetExprOnly(t *testing.T) {
+	suite := tester.NewParserDumpTestSuite(t)
+	suite.UsePHP84()
+	suite.Code = `<?php
+		class Foo
+		{
+		    public string $bar {
+		        get => $this->bar . ' modified';
+		    }
+		}
+    `
+
+	suite.Expected = `&ast.Root{
+	Stmts: []ast.Vertex{
+		&ast.StmtClass{
+			Name: &ast.Identifier{
+				Val: []byte("Foo"),
+			},
+			Stmts: []ast.Vertex{
+				&ast.StmtPropertyList{
+					Modifiers: []ast.Vertex{
+						&ast.Identifier{
+							Val: []byte("public"),
+						},
+					},
+					Type: &ast.Name{
+						Parts: []ast.Vertex{
+							&ast.NamePart{
+								Val: []byte("string"),
+							},
+						},
+					},
+					Props: []ast.Vertex{
+						&ast.StmtProperty{
+							Var: &ast.ExprVariable{
+								Name: &ast.Identifier{
+									Val: []byte("$bar"),
+								},
+							},
+							Hooks: []ast.Vertex{
+								&ast.StmtPropertyHook{
+									Expr: &ast.ExprBinaryConcat{
+										Left: &ast.ExprPropertyFetch{
+											Var: &ast.ExprVariable{
+												Name: &ast.Identifier{
+													Val: []byte("$this"),
+												},
+											},
+											Prop: &ast.Identifier{
+												Val: []byte("bar"),
+											},
+										},
+										Right: &ast.ScalarString{
+											Val: []byte("' modified'"),
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+		},
+	},
+},`
+
+	suite.Run()
+}
+
 func TestConstantsInClasses(t *testing.T) {
 	suite := tester.NewParserDumpTestSuite(t)
 	suite.UsePHP84()

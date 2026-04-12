@@ -820,6 +820,7 @@ func (v *Dumper) StmtProperty(n *ast.StmtProperty) {
 	v.dumpVertex("Var", n.Var)
 	v.dumpToken("EqualTkn", n.EqualTkn)
 	v.dumpVertex("Expr", n.Expr)
+	v.dumpVertexList("Hooks", n.Hooks)
 
 	v.indent--
 	v.print(v.indent, "},\n")
@@ -836,6 +837,20 @@ func (v *Dumper) StmtPropertyList(n *ast.StmtPropertyList) {
 	v.dumpVertexList("Props", n.Props)
 	v.dumpTokenList("SeparatorTkns", n.SeparatorTkns)
 	v.dumpToken("SemiColonTkn", n.SemiColonTkn)
+
+	v.indent--
+	v.print(v.indent, "},\n")
+}
+
+func (v *Dumper) StmtPropertyHook(n *ast.StmtPropertyHook) {
+	v.print(0, "&ast.StmtPropertyHook{\n")
+	v.indent++
+
+	v.dumpPosition(n.Position)
+	v.dumpVertexList("Modifiers", n.Modifiers)
+	v.dumpVertexList("Params", n.Params)
+	v.dumpVertexList("Stmts", n.Stmts)
+	v.dumpVertex("Expr", n.Expr)
 
 	v.indent--
 	v.print(v.indent, "},\n")

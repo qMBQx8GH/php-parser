@@ -300,6 +300,8 @@ import (
 %type <list> top_statement_list
 %type <list> inner_statement_list class_statement_list
 %type <list> method_modifiers variable_modifiers
+%type <list> property_hook_list
+%type <node> property_hook
 %type <list> optional_property_modifiers
 %type <list> non_empty_member_modifiers class_modifiers optional_class_modifiers
 %type <list> optional_attributes attributes
@@ -1469,6 +1471,10 @@ class_statement_list:
 class_statement:
         optional_attributes variable_modifiers optional_type_without_static property_list ';'
             { $$ = yylex.(*Parser).builder.NewPropertyList($1, $2, $3, $4, $5) }
+    |   optional_attributes variable_modifiers optional_type_without_static plain_variable backup_doc_comment '{' property_hook_list '}'
+            { $$ = yylex.(*Parser).builder.NewHookedPropertyListNoInit($1, $2, $3, $4, $6, $7, $8) }
+    |   optional_attributes variable_modifiers optional_type_without_static plain_variable '=' expr backup_doc_comment '{' property_hook_list '}'
+            { $$ = yylex.(*Parser).builder.NewHookedPropertyListWithInit($1, $2, $3, $4, $5, $6, $8, $9, $10) }
     |   optional_attributes method_modifiers T_CONST class_const_list ';'
             { $$ = yylex.(*Parser).builder.NewClassConstList($1, $2, $3, $4, $5) }
     |   optional_attributes method_modifiers T_CONST optional_type_without_static class_const_list ';'
@@ -2962,18 +2968,6 @@ callable_variable:
                     CloseBracketTkn: $4,
                 }
             }
-    |   array_object_dereferencable '{' expr '}'
-            {
-                yylex.(*Parser).Error("Array and string offset access syntax with curly braces is no longer supported")
-
-                $$ = &ast.ExprArrayDimFetch{
-                    Position: yylex.(*Parser).builder.Pos.NewNodeTokenPosition($1, $4),
-                    Var:             $1,
-                    OpenBracketTkn:  $2,
-                    Dim:             $3,
-                    CloseBracketTkn: $4,
-                }
-            }
     |   array_object_dereferencable T_OBJECT_OPERATOR property_name argument_list
             { $$ = yylex.(*Parser).builder.NewMethodCall($1, $2, $3, $4) }
     |   array_object_dereferencable T_NULLSAFE_OBJECT_OPERATOR property_name argument_list
@@ -3464,6 +3458,24 @@ isset_variables:
 
 isset_variable:
         expr                               { $$ = $1 }
+;
+
+property_hook_list:
+        /* empty */                        { $$ = []ast.Vertex{} }
+    |   property_hook_list property_hook   { $$ = append($1, $2) }
+;
+
+property_hook:
+        method_modifiers T_STRING backup_doc_comment '(' parameter_list ')' '{' inner_statement_list '}'
+            { $$ = yylex.(*Parser).builder.NewPropertyHookBodyWithParam($1, $2, $4, $5, $6, $7, $8, $9) }
+    |   method_modifiers T_STRING backup_doc_comment '(' parameter_list ')' T_DOUBLE_ARROW expr ';'
+            { $$ = yylex.(*Parser).builder.NewPropertyHookExprWithParam($1, $2, $4, $5, $6, $7, $8, $9) }
+    |   method_modifiers T_STRING backup_doc_comment '{' inner_statement_list '}'
+            { $$ = yylex.(*Parser).builder.NewPropertyHookBody($1, $2, $4, $5, $6) }
+    |   method_modifiers T_STRING backup_doc_comment T_DOUBLE_ARROW expr ';'
+            { $$ = yylex.(*Parser).builder.NewPropertyHookExpr($1, $2, $4, $5, $6) }
+    |   method_modifiers T_STRING backup_doc_comment ';'
+            { $$ = yylex.(*Parser).builder.NewPropertyHookAbstract($1, $2, $4) }
 ;
 
 /////////////////////////////////////////////////////////////////////////

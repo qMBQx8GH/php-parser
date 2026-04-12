@@ -543,6 +543,20 @@ func (p *printer) StmtPropertyList(n *ast.StmtPropertyList) {
 	p.printToken(n.SemiColonTkn, []byte(";"))
 }
 
+func (p *printer) StmtPropertyHook(n *ast.StmtPropertyHook) {
+	p.printList(n.Modifiers)
+	p.printToken(n.NameTkn, nil)
+	p.printToken(n.OpenParenthesisTkn, p.ifNodeList(n.Params, []byte("(")))
+	p.printSeparatedList(n.Params, n.SeparatorTkns, []byte(","))
+	p.printToken(n.CloseParenthesisTkn, p.ifNodeList(n.Params, []byte(")")))
+	p.printToken(n.OpenCurlyBracketTkn, nil)
+	p.printList(n.Stmts)
+	p.printToken(n.CloseCurlyBracketTkn, nil)
+	p.printToken(n.DoubleArrowTkn, nil)
+	p.printNode(n.Expr)
+	p.printToken(n.SemiColonTkn, nil)
+}
+
 func (p *printer) StmtReturn(n *ast.StmtReturn) {
 	p.printToken(n.ReturnTkn, []byte("return"))
 	p.printNode(n.Expr)

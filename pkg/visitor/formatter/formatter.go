@@ -889,6 +889,35 @@ func (f *formatter) StmtPropertyList(n *ast.StmtPropertyList) {
 	n.SemiColonTkn = f.newSemicolonTkn()
 }
 
+func (f *formatter) StmtPropertyHook(n *ast.StmtPropertyHook) {
+	// Hook name
+	for _, m := range n.Modifiers {
+		m.Accept(f)
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+	}
+
+	if n.Params != nil {
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+	}
+
+	if n.Expr != nil {
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+		n.DoubleArrowTkn = f.newToken(token.T_DOUBLE_ARROW, []byte("=>"))
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+		n.Expr.Accept(f)
+		n.SemiColonTkn = f.newSemicolonTkn()
+	} else if n.Stmts != nil {
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+		n.OpenCurlyBracketTkn = f.newToken('{', []byte("{"))
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+		for _, s := range n.Stmts {
+			s.Accept(f)
+		}
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+		n.CloseCurlyBracketTkn = f.newToken('}', []byte("}"))
+	}
+}
+
 func (f *formatter) StmtReturn(n *ast.StmtReturn) {
 	n.ReturnTkn = f.newToken(token.T_RETURN, []byte("return"))
 

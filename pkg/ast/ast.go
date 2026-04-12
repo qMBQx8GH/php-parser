@@ -61,6 +61,7 @@ type Visitor interface {
 	StmtNamespace(n *StmtNamespace)
 	StmtNop(n *StmtNop)
 	StmtProperty(n *StmtProperty)
+	StmtPropertyHook(n *StmtPropertyHook)
 	StmtPropertyList(n *StmtPropertyList)
 	StmtReturn(n *StmtReturn)
 	StmtStatic(n *StmtStatic)

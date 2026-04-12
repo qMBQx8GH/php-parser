@@ -1595,6 +1595,224 @@ func (b *Builder) NewUse(
 	return use
 }
 
+func (b *Builder) NewHookedPropertyListNoInit(
+	AttrGroups []ast.Vertex,
+	Modifiers []ast.Vertex,
+	Type ast.Vertex,
+	VarTkn *token.Token,
+	OpenCurlyTkn *token.Token,
+	Hooks []ast.Vertex,
+	CloseCurlyTkn *token.Token,
+) *ast.StmtPropertyList {
+	prop := &ast.StmtProperty{
+		Position: b.Pos.NewTokensPosition(VarTkn, CloseCurlyTkn),
+		Var: &ast.ExprVariable{
+			Position: b.Pos.NewTokenPosition(VarTkn),
+			Name: &ast.Identifier{
+				Position:      b.Pos.NewTokenPosition(VarTkn),
+				IdentifierTkn: VarTkn,
+				Value:         VarTkn.Value,
+			},
+		},
+		OpenCurlyBracketTkn:  OpenCurlyTkn,
+		Hooks:                Hooks,
+		CloseCurlyBracketTkn: CloseCurlyTkn,
+	}
+
+	var pos *position2.Position
+	if AttrGroups != nil {
+		pos = b.Pos.NewNodeListTokenPosition(AttrGroups, CloseCurlyTkn)
+	} else {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, CloseCurlyTkn)
+	}
+
+	return &ast.StmtPropertyList{
+		Position:   pos,
+		AttrGroups: AttrGroups,
+		Modifiers:  Modifiers,
+		Type:       Type,
+		Props:      []ast.Vertex{prop},
+	}
+}
+
+func (b *Builder) NewHookedPropertyListWithInit(
+	AttrGroups []ast.Vertex,
+	Modifiers []ast.Vertex,
+	Type ast.Vertex,
+	VarTkn *token.Token,
+	EqualTkn *token.Token,
+	Expr ast.Vertex,
+	OpenCurlyTkn *token.Token,
+	Hooks []ast.Vertex,
+	CloseCurlyTkn *token.Token,
+) *ast.StmtPropertyList {
+	prop := &ast.StmtProperty{
+		Position: b.Pos.NewTokensPosition(VarTkn, CloseCurlyTkn),
+		Var: &ast.ExprVariable{
+			Position: b.Pos.NewTokenPosition(VarTkn),
+			Name: &ast.Identifier{
+				Position:      b.Pos.NewTokenPosition(VarTkn),
+				IdentifierTkn: VarTkn,
+				Value:         VarTkn.Value,
+			},
+		},
+		EqualTkn:             EqualTkn,
+		Expr:                 Expr,
+		OpenCurlyBracketTkn:  OpenCurlyTkn,
+		Hooks:                Hooks,
+		CloseCurlyBracketTkn: CloseCurlyTkn,
+	}
+
+	var pos *position2.Position
+	if AttrGroups != nil {
+		pos = b.Pos.NewNodeListTokenPosition(AttrGroups, CloseCurlyTkn)
+	} else {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, CloseCurlyTkn)
+	}
+
+	return &ast.StmtPropertyList{
+		Position:   pos,
+		AttrGroups: AttrGroups,
+		Modifiers:  Modifiers,
+		Type:       Type,
+		Props:      []ast.Vertex{prop},
+	}
+}
+
+func (b *Builder) NewPropertyHookBody(
+	Modifiers []ast.Vertex,
+	NameTkn *token.Token,
+	OpenCurlyTkn *token.Token,
+	Stmts []ast.Vertex,
+	CloseCurlyTkn *token.Token,
+) *ast.StmtPropertyHook {
+	var pos *position2.Position
+	if Modifiers != nil {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, CloseCurlyTkn)
+	} else {
+		pos = b.Pos.NewTokensPosition(NameTkn, CloseCurlyTkn)
+	}
+
+	return &ast.StmtPropertyHook{
+		Position:             pos,
+		Modifiers:            Modifiers,
+		NameTkn:              NameTkn,
+		OpenCurlyBracketTkn:  OpenCurlyTkn,
+		Stmts:                Stmts,
+		CloseCurlyBracketTkn: CloseCurlyTkn,
+	}
+}
+
+func (b *Builder) NewPropertyHookExpr(
+	Modifiers []ast.Vertex,
+	NameTkn *token.Token,
+	DoubleArrowTkn *token.Token,
+	Expr ast.Vertex,
+	SemiColonTkn *token.Token,
+) *ast.StmtPropertyHook {
+	var pos *position2.Position
+	if Modifiers != nil {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, SemiColonTkn)
+	} else {
+		pos = b.Pos.NewTokensPosition(NameTkn, SemiColonTkn)
+	}
+
+	return &ast.StmtPropertyHook{
+		Position:       pos,
+		Modifiers:      Modifiers,
+		NameTkn:        NameTkn,
+		DoubleArrowTkn: DoubleArrowTkn,
+		Expr:           Expr,
+		SemiColonTkn:   SemiColonTkn,
+	}
+}
+
+func (b *Builder) NewPropertyHookBodyWithParam(
+	Modifiers []ast.Vertex,
+	NameTkn *token.Token,
+	OpenParenTkn *token.Token,
+	Params ast.Vertex,
+	CloseParenTkn *token.Token,
+	OpenCurlyTkn *token.Token,
+	Stmts []ast.Vertex,
+	CloseCurlyTkn *token.Token,
+) *ast.StmtPropertyHook {
+	params, sepTkns := b.SeparatedListItems(Params)
+
+	var pos *position2.Position
+	if Modifiers != nil {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, CloseCurlyTkn)
+	} else {
+		pos = b.Pos.NewTokensPosition(NameTkn, CloseCurlyTkn)
+	}
+
+	return &ast.StmtPropertyHook{
+		Position:             pos,
+		Modifiers:            Modifiers,
+		NameTkn:              NameTkn,
+		OpenParenthesisTkn:   OpenParenTkn,
+		Params:               params,
+		SeparatorTkns:        sepTkns,
+		CloseParenthesisTkn:  CloseParenTkn,
+		OpenCurlyBracketTkn:  OpenCurlyTkn,
+		Stmts:                Stmts,
+		CloseCurlyBracketTkn: CloseCurlyTkn,
+	}
+}
+
+func (b *Builder) NewPropertyHookExprWithParam(
+	Modifiers []ast.Vertex,
+	NameTkn *token.Token,
+	OpenParenTkn *token.Token,
+	Params ast.Vertex,
+	CloseParenTkn *token.Token,
+	DoubleArrowTkn *token.Token,
+	Expr ast.Vertex,
+	SemiColonTkn *token.Token,
+) *ast.StmtPropertyHook {
+	params, sepTkns := b.SeparatedListItems(Params)
+
+	var pos *position2.Position
+	if Modifiers != nil {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, SemiColonTkn)
+	} else {
+		pos = b.Pos.NewTokensPosition(NameTkn, SemiColonTkn)
+	}
+
+	return &ast.StmtPropertyHook{
+		Position:            pos,
+		Modifiers:           Modifiers,
+		NameTkn:             NameTkn,
+		OpenParenthesisTkn:  OpenParenTkn,
+		Params:              params,
+		SeparatorTkns:       sepTkns,
+		CloseParenthesisTkn: CloseParenTkn,
+		DoubleArrowTkn:      DoubleArrowTkn,
+		Expr:                Expr,
+		SemiColonTkn:        SemiColonTkn,
+	}
+}
+
+func (b *Builder) NewPropertyHookAbstract(
+	Modifiers []ast.Vertex,
+	NameTkn *token.Token,
+	SemiColonTkn *token.Token,
+) *ast.StmtPropertyHook {
+	var pos *position2.Position
+	if Modifiers != nil {
+		pos = b.Pos.NewNodeListTokenPosition(Modifiers, SemiColonTkn)
+	} else {
+		pos = b.Pos.NewTokensPosition(NameTkn, SemiColonTkn)
+	}
+
+	return &ast.StmtPropertyHook{
+		Position:     pos,
+		Modifiers:    Modifiers,
+		NameTkn:      NameTkn,
+		SemiColonTkn: SemiColonTkn,
+	}
+}
+
 func (b *Builder) NewArgumentList(
 	OpenParenthesisTkn *token.Token,
 

@@ -514,6 +514,27 @@ type StmtProperty struct {
 	Var      Vertex
 	EqualTkn *token.Token
 	Expr     Vertex
+	// PHP 8.4: property hooks
+	OpenCurlyBracketTkn  *token.Token
+	Hooks                []Vertex
+	CloseCurlyBracketTkn *token.Token
+}
+
+// StmtPropertyHook node (PHP 8.4+)
+type StmtPropertyHook struct {
+	Position             *position.Position
+	Modifiers            []Vertex
+	NameTkn              *token.Token
+	OpenParenthesisTkn   *token.Token
+	Params               []Vertex
+	SeparatorTkns        []*token.Token
+	CloseParenthesisTkn  *token.Token
+	OpenCurlyBracketTkn  *token.Token
+	Stmts                []Vertex
+	CloseCurlyBracketTkn *token.Token
+	DoubleArrowTkn       *token.Token
+	Expr                 Vertex
+	SemiColonTkn         *token.Token
 }
 
 // StmtPropertyList node

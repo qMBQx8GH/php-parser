@@ -176,6 +176,10 @@ func (v *Null) StmtProperty(_ *ast.StmtProperty) {
 	// do nothing
 }
 
+func (v *Null) StmtPropertyHook(_ *ast.StmtPropertyHook) {
+	// do nothing
+}
+
 func (v *Null) StmtPropertyList(_ *ast.StmtPropertyList) {
 	// do nothing
 }
