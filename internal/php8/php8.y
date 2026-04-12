@@ -1294,10 +1294,13 @@ optional_property_modifiers:
 ;
 
 property_modifier:
-        T_PUBLIC                  { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_PROTECTED               { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_PRIVATE                 { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_READONLY                { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+        T_PUBLIC                              { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PROTECTED                           { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PRIVATE                             { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_READONLY                            { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PUBLIC    '(' T_STRING ')'          { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PROTECTED '(' T_STRING ')'          { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PRIVATE   '(' T_STRING ')'          { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
 ;
 
 parameter:
@@ -1692,13 +1695,16 @@ non_empty_member_modifiers:
 ;
 
 member_modifier:
-        T_PUBLIC                   { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_PROTECTED                { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_PRIVATE                  { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_STATIC                   { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_ABSTRACT                 { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_FINAL                    { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
-    |   T_READONLY                 { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+        T_PUBLIC                              { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PROTECTED                           { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PRIVATE                             { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_STATIC                              { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_ABSTRACT                            { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_FINAL                               { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_READONLY                            { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PUBLIC    '(' T_STRING ')'          { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PROTECTED '(' T_STRING ')'          { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
+    |   T_PRIVATE   '(' T_STRING ')'          { $$ = yylex.(*Parser).builder.NewIdentifier($1) }
 ;
 
 property_list:

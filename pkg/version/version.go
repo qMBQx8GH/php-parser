@@ -21,7 +21,7 @@ var (
 	php7RangeEnd   = &Version{Major: 7, Minor: 4}
 
 	php8RangeStart = &Version{Major: 8}
-	php8RangeEnd   = &Version{Major: 8, Minor: 3}
+	php8RangeEnd   = &Version{Major: 8, Minor: 4}
 )
 
 func New(v string) (*Version, error) {

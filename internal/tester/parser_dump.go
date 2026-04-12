@@ -2,8 +2,9 @@ package tester
 
 import (
 	"bytes"
-	"gotest.tools/assert"
 	"testing"
+
+	"gotest.tools/assert"
 
 	"github.com/Demooon86/php-parser/pkg/conf"
 	"github.com/Demooon86/php-parser/pkg/parser"
@@ -47,8 +48,13 @@ func (p *ParserDumpTestSuite) WithPositions() {
 func (p *ParserDumpTestSuite) UsePHP8() {
 	p.Version = version.Version{Major: 8, Minor: 0}
 }
+
 func (p *ParserDumpTestSuite) UsePHP83() {
 	p.Version = version.Version{Major: 8, Minor: 3}
+}
+
+func (p *ParserDumpTestSuite) UsePHP84() {
+	p.Version = version.Version{Major: 8, Minor: 4}
 }
 
 func (p *ParserDumpTestSuite) Run() {
