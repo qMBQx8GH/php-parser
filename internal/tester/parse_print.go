@@ -32,6 +32,11 @@ func (p *ParserPrintTestSuite) UsePHP8() *ParserPrintTestSuite {
 	return p
 }
 
+func (p *ParserPrintTestSuite) UsePHP84() *ParserPrintTestSuite {
+	p.Version = version.Version{Major: 8, Minor: 4}
+	return p
+}
+
 func (p *ParserPrintTestSuite) Run(code string) {
 	actual := p.print(p.parse(code))
 	assert.DeepEqual(p.t, code, actual)

@@ -21,6 +21,10 @@ type printer struct {
 	last   []byte
 }
 
+type Printer = printer
+
+type PrinterPHP8 = printer
+
 func NewPrinter(output io.Writer) *printer {
 	return &printer{
 		output: output,
@@ -533,6 +537,9 @@ func (p *printer) StmtProperty(n *ast.StmtProperty) {
 	p.printNode(n.Var)
 	p.printToken(n.EqualTkn, p.ifNode(n.Expr, []byte("=")))
 	p.printNode(n.Expr)
+	p.printToken(n.OpenCurlyBracketTkn, nil)
+	p.printList(n.Hooks)
+	p.printToken(n.CloseCurlyBracketTkn, nil)
 }
 
 func (p *printer) StmtPropertyList(n *ast.StmtPropertyList) {
@@ -540,7 +547,19 @@ func (p *printer) StmtPropertyList(n *ast.StmtPropertyList) {
 	p.printList(n.Modifiers)
 	p.printNode(n.Type)
 	p.printSeparatedList(n.Props, n.SeparatorTkns, []byte(","))
-	p.printToken(n.SemiColonTkn, []byte(";"))
+	// For hooked properties (with { ... }), there is no semicolon.
+	// Detect by checking if the single property has an OpenCurlyBracketTkn.
+	var isHooked bool
+	if len(n.Props) == 1 {
+		if prop, ok := n.Props[0].(*ast.StmtProperty); ok && prop.OpenCurlyBracketTkn != nil {
+			isHooked = true
+		}
+	}
+	if isHooked {
+		p.printToken(n.SemiColonTkn, nil)
+	} else {
+		p.printToken(n.SemiColonTkn, []byte(";"))
+	}
 }
 
 func (p *printer) StmtPropertyHook(n *ast.StmtPropertyHook) {
