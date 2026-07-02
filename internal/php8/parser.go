@@ -1,11 +1,11 @@
 package php8
 
 import (
-	"github.com/Demooon86/php-parser/internal/position"
-	"github.com/Demooon86/php-parser/pkg/ast"
-	"github.com/Demooon86/php-parser/pkg/conf"
-	"github.com/Demooon86/php-parser/pkg/errors"
-	"github.com/Demooon86/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/internal/position"
+	"github.com/VKCOM/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/errors"
+	"github.com/VKCOM/php-parser/pkg/token"
 )
 
 // Parser structure
