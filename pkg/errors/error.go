@@ -3,7 +3,7 @@ package errors
 import (
 	"fmt"
 
-	"github.com/Demooon86/php-parser/pkg/position"
+	"github.com/VKCOM/php-parser/pkg/position"
 )
 
 // Error parsing error

@@ -2,11 +2,11 @@ package printer_test
 
 import (
 	"bytes"
-	"github.com/Demooon86/php-parser/pkg/token"
-	"github.com/Demooon86/php-parser/pkg/visitor/printer"
+	"github.com/VKCOM/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/pkg/visitor/printer"
 	"testing"
 
-	"github.com/Demooon86/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/ast"
 )
 
 func TestPrinterPrintFile(t *testing.T) {

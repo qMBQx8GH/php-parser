@@ -5,10 +5,10 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/Demooon86/php-parser/pkg/position"
-	"github.com/Demooon86/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/pkg/position"
+	"github.com/VKCOM/php-parser/pkg/token"
 
-	"github.com/Demooon86/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/ast"
 )
 
 type Dumper struct {

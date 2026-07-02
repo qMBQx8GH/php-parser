@@ -3,7 +3,7 @@ package php84
 import (
 	"testing"
 
-	"github.com/Demooon86/php-parser/internal/tester"
+	"github.com/VKCOM/php-parser/internal/tester"
 )
 
 func TestPropertyHooksGetSet(t *testing.T) {

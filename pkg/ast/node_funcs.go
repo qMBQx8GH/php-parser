@@ -2,7 +2,7 @@
 
 package ast
 
-import "github.com/Demooon86/php-parser/pkg/position"
+import "github.com/VKCOM/php-parser/pkg/position"
 
 type Type int
 

@@ -5,13 +5,13 @@ import (
 
 	"gotest.tools/assert"
 
-	"github.com/Demooon86/php-parser/internal/php7"
-	"github.com/Demooon86/php-parser/pkg/ast"
-	"github.com/Demooon86/php-parser/pkg/conf"
-	"github.com/Demooon86/php-parser/pkg/errors"
-	"github.com/Demooon86/php-parser/pkg/position"
-	"github.com/Demooon86/php-parser/pkg/token"
-	"github.com/Demooon86/php-parser/pkg/version"
+	"github.com/VKCOM/php-parser/internal/php7"
+	"github.com/VKCOM/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/errors"
+	"github.com/VKCOM/php-parser/pkg/position"
+	"github.com/VKCOM/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/pkg/version"
 )
 
 func TestMain(m *testing.M) {

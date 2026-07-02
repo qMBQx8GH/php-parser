@@ -3,7 +3,7 @@ package php8_test
 import (
 	"testing"
 
-	"github.com/Demooon86/php-parser/internal/tester"
+	"github.com/VKCOM/php-parser/internal/tester"
 )
 
 func TestClassReadonlyModifier(t *testing.T) {

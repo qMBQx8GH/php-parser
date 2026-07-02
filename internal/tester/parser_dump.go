@@ -6,10 +6,10 @@ import (
 
 	"gotest.tools/assert"
 
-	"github.com/Demooon86/php-parser/pkg/conf"
-	"github.com/Demooon86/php-parser/pkg/parser"
-	"github.com/Demooon86/php-parser/pkg/version"
-	"github.com/Demooon86/php-parser/pkg/visitor/dumper"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/parser"
+	"github.com/VKCOM/php-parser/pkg/version"
+	"github.com/VKCOM/php-parser/pkg/visitor/dumper"
 )
 
 type ParserDumpTestSuite struct {

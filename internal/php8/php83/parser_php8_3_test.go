@@ -1,7 +1,7 @@
 package php83
 
 import (
-	"github.com/Demooon86/php-parser/internal/tester"
+	"github.com/VKCOM/php-parser/internal/tester"
 	"testing"
 )
 

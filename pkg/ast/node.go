@@ -1,8 +1,8 @@
 package ast
 
 import (
-	"github.com/Demooon86/php-parser/pkg/position"
-	"github.com/Demooon86/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/pkg/position"
+	"github.com/VKCOM/php-parser/pkg/token"
 )
 
 //go:generate go run node_funcs_gen.go

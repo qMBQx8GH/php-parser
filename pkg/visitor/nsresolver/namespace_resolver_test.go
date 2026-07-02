@@ -3,12 +3,12 @@ package nsresolver_test
 import (
 	"testing"
 
-	"github.com/Demooon86/php-parser/pkg/visitor/nsresolver"
-	"github.com/Demooon86/php-parser/pkg/visitor/traverser"
+	"github.com/VKCOM/php-parser/pkg/visitor/nsresolver"
+	"github.com/VKCOM/php-parser/pkg/visitor/traverser"
 
 	"gotest.tools/assert"
 
-	"github.com/Demooon86/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/ast"
 )
 
 func TestResolveStaticCall(t *testing.T) {

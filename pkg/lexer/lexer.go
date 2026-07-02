@@ -3,10 +3,10 @@ package lexer
 import (
 	"errors"
 
-	"github.com/Demooon86/php-parser/internal/php7"
-	"github.com/Demooon86/php-parser/internal/php8"
-	"github.com/Demooon86/php-parser/pkg/conf"
-	"github.com/Demooon86/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/internal/php7"
+	"github.com/VKCOM/php-parser/internal/php8"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/token"
 )
 
 var ErrVersionOutOfRange = errors.New("the version is out of supported range")

@@ -4,8 +4,8 @@ package php8
 import (
     "strconv"
 
-    "github.com/Demooon86/php-parser/pkg/ast"
-    "github.com/Demooon86/php-parser/pkg/token"
+    "github.com/VKCOM/php-parser/pkg/ast"
+    "github.com/VKCOM/php-parser/pkg/token"
 )
 
 %}

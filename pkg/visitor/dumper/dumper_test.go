@@ -4,11 +4,11 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/Demooon86/php-parser/pkg/position"
-	"github.com/Demooon86/php-parser/pkg/token"
-	"github.com/Demooon86/php-parser/pkg/visitor/dumper"
+	"github.com/VKCOM/php-parser/pkg/position"
+	"github.com/VKCOM/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/pkg/visitor/dumper"
 
-	"github.com/Demooon86/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/ast"
 )
 
 func TestDumper_root(t *testing.T) {
