@@ -1,4 +1,4 @@
-module github.com/Demooon86/php-parser
+module github.com/qMBQx8GH/php-parser
 
 go 1.22.0
 
