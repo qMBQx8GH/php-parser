@@ -3,11 +3,11 @@ package parser
 import (
 	"errors"
 
-	"github.com/Demooon86/php-parser/internal/php7"
-	"github.com/Demooon86/php-parser/internal/php8"
-	"github.com/Demooon86/php-parser/pkg/ast"
-	"github.com/Demooon86/php-parser/pkg/conf"
-	"github.com/Demooon86/php-parser/pkg/version"
+	"github.com/VKCOM/php-parser/internal/php7"
+	"github.com/VKCOM/php-parser/internal/php8"
+	"github.com/VKCOM/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/version"
 )
 
 // ErrVersionOutOfRange is returned if the version is not supported
