@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"strings"
 
-	pos "github.com/Demooon86/php-parser/internal/position"
-	"github.com/Demooon86/php-parser/pkg/conf"
-	"github.com/Demooon86/php-parser/pkg/errors"
-	"github.com/Demooon86/php-parser/pkg/position"
-	"github.com/Demooon86/php-parser/pkg/token"
-	"github.com/Demooon86/php-parser/pkg/version"
+	pos "github.com/VKCOM/php-parser/internal/position"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/errors"
+	"github.com/VKCOM/php-parser/pkg/position"
+	"github.com/VKCOM/php-parser/pkg/token"
+	"github.com/VKCOM/php-parser/pkg/version"
 )
 
 type Lexer struct {
