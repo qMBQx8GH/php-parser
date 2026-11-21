@@ -268,8 +268,8 @@ import (
 %type <node> array_pair possible_array_pair
 %type <node> isset_variable
 
-%type <node> type_expr type union_type optional_return_type
-%type <node> type_expr_without_static type_without_static union_type_without_static optional_type_without_static
+%type <node> type_expr type union_type union_type_element optional_return_type
+%type <node> type_expr_without_static type_without_static union_type_without_static union_type_without_static_element optional_type_without_static
 %type <node> intersection_type intersection_type_without_static
 
 %type <node> class_modifier
@@ -1327,15 +1327,30 @@ type_without_static:
     |   name                { $$ = $1 }
 ;
 
+// An element of a union type is a type or, since PHP 8.2 (DNF types), an intersection type
+// in parentheses: (A&B)|null.
+union_type_element:
+        type                              { $$ = $1 }
+    |   '(' intersection_type ')'         { $$ = yylex.(*Parser).builder.NewParenthesizedIntersectionType($1, $2, $3) }
+;
+
 union_type:
-        type '|' type       { $$ = yylex.(*Parser).builder.NewSeparatedListWithTwoElements($1, $2, $3) }
-    |   union_type '|' type { $$ = yylex.(*Parser).builder.AppendToSeparatedList($1, $2, $3) }
+        union_type_element '|' union_type_element
+            { $$ = yylex.(*Parser).builder.NewSeparatedListWithTwoElements($1, $2, $3) }
+    |   union_type '|' union_type_element
+            { $$ = yylex.(*Parser).builder.AppendToSeparatedList($1, $2, $3) }
+;
+
+union_type_without_static_element:
+        type_without_static               { $$ = $1 }
+    |   '(' intersection_type_without_static ')'
+            { $$ = yylex.(*Parser).builder.NewParenthesizedIntersectionType($1, $2, $3) }
 ;
 
 union_type_without_static:
-        type_without_static '|' type_without_static
+        union_type_without_static_element '|' union_type_without_static_element
             { $$ = yylex.(*Parser).builder.NewSeparatedListWithTwoElements($1, $2, $3) }
-    |   union_type_without_static '|' type_without_static
+    |   union_type_without_static '|' union_type_without_static_element
             { $$ = yylex.(*Parser).builder.AppendToSeparatedList($1, $2, $3) }
 ;
 
@@ -1347,9 +1362,9 @@ intersection_type:
 ;
 
 intersection_type_without_static:
-        type_expr_without_static T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG type_expr_without_static
+        type_without_static T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG type_without_static
             { $$ = yylex.(*Parser).builder.NewSeparatedListWithTwoElements($1, $2, $3) }
-    |   intersection_type_without_static T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG type_expr_without_static
+    |   intersection_type_without_static T_AMPERSAND_NOT_FOLLOWED_BY_VAR_OR_VARARG type_without_static
             { $$ = yylex.(*Parser).builder.AppendToSeparatedList($1, $2, $3) }
 ;
 

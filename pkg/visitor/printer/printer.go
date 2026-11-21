@@ -181,7 +181,13 @@ func (p *printer) Union(n *ast.Union) {
 }
 
 func (p *printer) Intersection(n *ast.Intersection) {
+	if n.OpenParenthesisTkn != nil {
+		p.printToken(n.OpenParenthesisTkn, []byte("("))
+	}
 	p.printSeparatedList(n.Types, n.SeparatorTkns, []byte("&"))
+	if n.CloseParenthesisTkn != nil {
+		p.printToken(n.CloseParenthesisTkn, []byte(")"))
+	}
 }
 
 func (p *printer) Attribute(n *ast.Attribute) {

@@ -266,8 +266,10 @@ func (v *Dumper) Intersection(n *ast.Intersection) {
 	v.indent++
 
 	v.dumpPosition(n.Position)
+	v.dumpToken("OpenParenthesisTkn", n.OpenParenthesisTkn)
 	v.dumpVertexList("Types", n.Types)
 	v.dumpTokenList("SeparatorTkns", n.SeparatorTkns)
+	v.dumpToken("CloseParenthesisTkn", n.CloseParenthesisTkn)
 
 	v.indent--
 	v.print(v.indent, "},\n")

@@ -807,6 +807,20 @@ func (b *Builder) NewIntersectionType(
 	}
 }
 
+// NewParenthesizedIntersectionType creates an intersection type wrapped in parentheses,
+// it is an element of a DNF type: (A&B)|null.
+func (b *Builder) NewParenthesizedIntersectionType(
+	OpenParenthesisTkn *token.Token,
+	Types ast.Vertex,
+	CloseParenthesisTkn *token.Token,
+) *ast.Intersection {
+	n := b.NewIntersectionType(Types)
+	n.Position = b.Pos.NewTokensPosition(OpenParenthesisTkn, CloseParenthesisTkn)
+	n.OpenParenthesisTkn = OpenParenthesisTkn
+	n.CloseParenthesisTkn = CloseParenthesisTkn
+	return n
+}
+
 func (b *Builder) NewReturnType(
 	ColonTkn *token.Token,
 	Type ast.Vertex,

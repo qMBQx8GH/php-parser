@@ -51,10 +51,15 @@ func (n *Union) GetPosition() *position.Position {
 }
 
 // Intersection node is Expr&Expr1&...
+//
+// It is wrapped in parentheses (OpenParenthesisTkn and CloseParenthesisTkn are set)
+// when it is a part of a DNF type: (A&B)|null.
 type Intersection struct {
-	Position      *position.Position
-	Types         []Vertex
-	SeparatorTkns []*token.Token
+	Position            *position.Position
+	OpenParenthesisTkn  *token.Token
+	Types               []Vertex
+	SeparatorTkns       []*token.Token
+	CloseParenthesisTkn *token.Token
 }
 
 func (n *Intersection) Accept(v Visitor) {
