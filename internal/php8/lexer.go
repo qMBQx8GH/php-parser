@@ -71,9 +71,19 @@ func (lex *Lexer) addFreeFloatingToken(t *token.Token, id token.ID, ps, pe int) 
 	t.FreeFloating = append(t.FreeFloating, skippedTkn)
 }
 
+// isEscaped reports whether the character at position p is escaped,
+// i.e. it is preceded by an odd number of backslashes.
+func (lex *Lexer) isEscaped(p int) bool {
+	n := 0
+	for i := p - 1; i >= 0 && lex.data[i] == '\\'; i-- {
+		n++
+	}
+	return n%2 == 1
+}
+
 func (lex *Lexer) isNotStringVar() bool {
 	p := lex.p
-	if lex.data[p-1] == '\\' && lex.data[p-2] != '\\' {
+	if lex.isEscaped(p) {
 		return true
 	}
 
@@ -94,7 +104,7 @@ func (lex *Lexer) isNotStringVar() bool {
 
 func (lex *Lexer) isNotStringEnd(s byte) bool {
 	p := lex.p
-	if lex.data[p-1] == '\\' && lex.data[p-2] != '\\' {
+	if lex.isEscaped(p) {
 		return true
 	}
 

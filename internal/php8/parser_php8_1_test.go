@@ -1,6 +1,7 @@
 package php8_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/VKCOM/php-parser/internal/tester"
@@ -520,5 +521,105 @@ func TestOpenTagAtEndOfFile(t *testing.T) {
 		if _, errs := parseWithErrors(code); len(errs) != 0 {
 			t.Errorf("%q: unexpected errors: %v", code, errs)
 		}
+	}
+}
+
+func firstExpr(t *testing.T, code string) ast.Vertex {
+	t.Helper()
+
+	root, errs := parseWithErrors(code)
+	if len(errs) != 0 {
+		t.Fatalf("%q: unexpected errors: %v", code, errs)
+	}
+	stmt := root.(*ast.Root).Stmts[0].(*ast.StmtExpression)
+	return stmt.Expr.(*ast.ExprAssign).Expr
+}
+
+func partKinds(parts []ast.Vertex) []string {
+	var kinds []string
+	for _, p := range parts {
+		switch p := p.(type) {
+		case *ast.ScalarEncapsedStringPart:
+			kinds = append(kinds, "text:"+string(p.Value))
+		case *ast.ExprVariable:
+			kinds = append(kinds, "var")
+		case *ast.ExprPropertyFetch:
+			kinds = append(kinds, "prop")
+		case *ast.ExprNullsafePropertyFetch:
+			kinds = append(kinds, "nullsafe")
+		case *ast.ExprArrayDimFetch:
+			kinds = append(kinds, "dim")
+		default:
+			kinds = append(kinds, "other")
+		}
+	}
+	return kinds
+}
+
+// In the simple interpolation syntax only the first property is a part of the expression.
+func TestSimpleInterpolationTakesOnlyOneProperty(t *testing.T) {
+	tests := map[string][]string{
+		`<?php $s = "[U=$id]$o->name[/U]";`: {"text:[U=", "var", "text:]", "prop", "text:[/U]"},
+		`<?php $s = "$o->name[0]";`:         {"prop", "text:[0]"},
+		`<?php $s = "$o->a->b";`:            {"prop", "text:->b"},
+		`<?php $s = "$o?->a[0]";`:           {"nullsafe", "text:[0]"},
+		`<?php $s = "$a[0]->b";`:            {"dim", "text:->b"},
+		`<?php $s = "x $o->a y";`:           {"text:x ", "prop", "text: y"},
+	}
+
+	for code, want := range tests {
+		got := partKinds(firstExpr(t, code).(*ast.ScalarEncapsed).Parts)
+		if strings.Join(got, "|") != strings.Join(want, "|") {
+			t.Errorf("%s\n got  %v\n want %v", code, got, want)
+		}
+	}
+}
+
+// A quote or a dollar is escaped by an odd number of backslashes only.
+func TestEscapedQuoteAndDollarParity(t *testing.T) {
+	// "\\\"\"$e": text `\\\"\"` and the variable $e.
+	got := partKinds(firstExpr(t, `<?php $s = "\\\"\"$e";`).(*ast.ScalarEncapsed).Parts)
+	if want := `text:\\\"\"|var`; strings.Join(got, "|") != want {
+		t.Errorf("got %v, want %s", got, want)
+	}
+
+	// "\\$e": an escaped backslash and the variable.
+	got = partKinds(firstExpr(t, `<?php $s = "\\$e";`).(*ast.ScalarEncapsed).Parts)
+	if want := `text:\\|var`; strings.Join(got, "|") != want {
+		t.Errorf("got %v, want %s", got, want)
+	}
+
+	// "\\\$e": an escaped backslash and an escaped dollar, no variable at all.
+	if _, ok := firstExpr(t, `<?php $s = "\\\$e";`).(*ast.ScalarString); !ok {
+		t.Errorf(`"\\\$e" must be a string without interpolation`)
+	}
+
+	// The string from the Bitrix code base.
+	code := `<?php $s = "\"(?:[^\\\"\\r\\\\]|\\\\.|$white_space)*\"$white_space*";`
+	if _, ok := firstExpr(t, code).(*ast.ScalarEncapsed); !ok {
+		t.Errorf("%s must be an interpolated string", code)
+	}
+}
+
+// A lone \r is a line break (old Mac files).
+func TestCarriageReturnLineBreaks(t *testing.T) {
+	for _, code := range []string{
+		"<?php\r$a = 1;\r$b = 2;",
+		"<?php $a = 1;\r",
+		"<?\r$a = 1;?>x\r<?\r$b = 2;",
+		"<?php\r\r$a = 1; // comment\r$b = 2;",
+	} {
+		if _, errs := parseWithErrors(code); len(errs) != 0 {
+			t.Errorf("%q: unexpected errors: %v", code, errs)
+		}
+	}
+
+	root, _ := parseWithErrors("<?php\r$a = 1;\r$b = 2;")
+	stmts := root.(*ast.Root).Stmts
+	if got := stmts[0].GetPosition().StartLine; got != 2 {
+		t.Errorf("first statement is at line %d, want 2", got)
+	}
+	if got := stmts[1].GetPosition().StartLine; got != 3 {
+		t.Errorf("second statement is at line %d, want 3", got)
 	}
 }

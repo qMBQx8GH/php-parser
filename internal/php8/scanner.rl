@@ -40,7 +40,7 @@ func (lex *Lexer) Lex() *token.Token {
                 lex.newLines.Append(lex.p+1)
             }
 
-            if lex.data[lex.p] == '\r' && lex.data[lex.p+1] != '\n' {
+            if lex.data[lex.p] == '\r' && (lex.p+1 >= len(lex.data) || lex.data[lex.p+1] != '\n') {
                 lex.newLines.Append(lex.p+1)
             }
         }
@@ -51,7 +51,7 @@ func (lex *Lexer) Lex() *token.Token {
         action is_not_string_end_or_var { lex.isNotStringEnd('"') && lex.isNotStringVar() }
         action is_not_backqoute_end_or_var { lex.isNotStringEnd('`') && lex.isNotStringVar() }
 
-        newline = ('\r\n' >(nl, 1) | '\r' >(nl, 0) | '\n' >(nl, 0)) $new_line %{};
+        newline = ('\r\n' | '\r' | '\n') $new_line %{};
         any_line = any | newline;
         whitespace = [\t\v\f ];
         whitespace_line = [\t\v\f ] | newline;
@@ -486,11 +486,17 @@ lex.addFreeFloatingToken(tkn, token.T_OPEN_TAG, lex.ts, lex.te)
 
         string_var := |*
             '$' varname         => {lex.setTokenPosition(tkn); tok = token.T_VARIABLE; fbreak;};
-            '->' varname_first  => {lex.ungetCnt(1); lex.setTokenPosition(tkn); tok = token.T_OBJECT_OPERATOR; fbreak;};
-            '?->' varname_first => {lex.ungetCnt(1); lex.setTokenPosition(tkn); tok = token.T_NULLSAFE_OBJECT_OPERATOR; fbreak;};
+            '->' varname_first  => {lex.ungetCnt(1); lex.setTokenPosition(tkn); tok = token.T_OBJECT_OPERATOR; fnext string_var_property; fbreak;};
+            '?->' varname_first => {lex.ungetCnt(1); lex.setTokenPosition(tkn); tok = token.T_NULLSAFE_OBJECT_OPERATOR; fnext string_var_property; fbreak;};
             varname             => {lex.setTokenPosition(tkn); tok = token.T_STRING; fbreak;};
             '['                 => {lex.setTokenPosition(tkn); tok = token.ID(int('[')); lex.call(ftargs, fentry(string_var_index)); goto _out;};
             any                 => {lex.ungetCnt(1); fret;};
+        *|;
+
+        # Only a single property is a part of the simple interpolation syntax:
+        # "$a->b[0]" and "$a->b->c" are $a->b followed by the text "[0]" and "->c".
+        string_var_property := |*
+            varname => {lex.setTokenPosition(tkn); tok = token.T_STRING; lex.ret(1); goto _out;};
         *|;
 
         string_var_index := |*
