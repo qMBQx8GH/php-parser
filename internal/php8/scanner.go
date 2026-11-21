@@ -3181,7 +3181,7 @@ func (lex *Lexer) Lex() *token.Token {
 			{
 				(lex.p) = (lex.te) - 1
 				lex.setTokenPosition(tkn)
-				tok = token.T_ENUM
+				tok = lex.enumToken()
 				{
 					(lex.p)++
 					goto _out

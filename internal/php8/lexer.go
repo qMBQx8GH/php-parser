@@ -264,3 +264,39 @@ func isValidVarNameStart(r byte) bool {
 func isValidVarName(r byte) bool {
 	return (r >= 'A' && r <= 'Z') || (r >= 'a' && r <= 'z') || (r >= '0' && r <= '9') || r == '_' || r >= 0x80
 }
+
+// enumToken decides how the word `enum` that has just been scanned must be treated.
+//
+// Like in PHP itself, `enum` is a keyword only when it is followed by the name of
+// the enum (`enum Foo`). In all other cases (`class Enum {}`, `Enum::CONST`,
+// `new Enum`, `enum extends`) it is a regular identifier.
+func (lex *Lexer) enumToken() token.ID {
+	p := lex.te
+
+	spaces := 0
+	for p < len(lex.data) && (lex.data[p] == ' ' || lex.data[p] == '\t' || lex.data[p] == '\r' || lex.data[p] == '\n') {
+		p++
+		spaces++
+	}
+	if spaces == 0 || p >= len(lex.data) {
+		return token.T_STRING
+	}
+
+	isIdentStart := func(c byte) bool {
+		return c == '_' || (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c >= 0x80
+	}
+	if !isIdentStart(lex.data[p]) {
+		return token.T_STRING
+	}
+
+	end := p
+	for end < len(lex.data) && (isIdentStart(lex.data[end]) || (lex.data[end] >= '0' && lex.data[end] <= '9')) {
+		end++
+	}
+	switch strings.ToLower(string(lex.data[p:end])) {
+	case "extends", "implements":
+		return token.T_STRING
+	}
+
+	return token.T_ENUM
+}

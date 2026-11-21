@@ -4,6 +4,11 @@ import (
 	"testing"
 
 	"github.com/VKCOM/php-parser/internal/tester"
+	"github.com/VKCOM/php-parser/pkg/ast"
+	"github.com/VKCOM/php-parser/pkg/conf"
+	"github.com/VKCOM/php-parser/pkg/errors"
+	"github.com/VKCOM/php-parser/pkg/parser"
+	"github.com/VKCOM/php-parser/pkg/version"
 )
 
 func TestReadonlyModifier(t *testing.T) {
@@ -432,4 +437,55 @@ function test(A&B $a): A&B {}
 },`
 
 	suite.Run()
+}
+
+// Reserved keywords are valid names of enum cases, like they are for class constants.
+func TestEnumCaseReservedKeywordNames(t *testing.T) {
+	names := []string{"Use", "Empty", "Default", "List", "Array", "Class", "Fn", "Match", "New", "Print", "Static", "Public", "Enum", "None"}
+
+	for _, name := range names {
+		src := "<?php\nenum E: int { case " + name + " = 1; }"
+
+		root, errs := parseWithErrors(src)
+		if len(errs) != 0 {
+			t.Errorf("case %s: unexpected errors: %v", name, errs)
+			continue
+		}
+
+		enum := root.(*ast.Root).Stmts[0].(*ast.StmtEnum)
+		enumCase := enum.Stmts[0].(*ast.EnumCase)
+		if got := string(enumCase.Name.(*ast.Identifier).Value); got != name {
+			t.Errorf("case %s: got name %q", name, got)
+		}
+	}
+}
+
+// `enum` is a keyword only when it is followed by the name of an enum.
+func TestEnumAsIdentifier(t *testing.T) {
+	codes := []string{
+		"<?php class Enum {}",
+		"<?php class Enum extends Foo {}",
+		"<?php class Enum implements Foo {}",
+		"<?php $a = Enum::X;",
+		"<?php $a = new Enum();",
+		"<?php use A\\Enum\\B; namespace X\\Enum;",
+		"<?php function enum() {} enum();",
+		"<?php $x->enum = 1; $x->enum();",
+		"<?php enum Foo {} class Bar extends Enum {}",
+	}
+
+	for _, code := range codes {
+		if _, errs := parseWithErrors(code); len(errs) != 0 {
+			t.Errorf("%q: unexpected errors: %v", code, errs)
+		}
+	}
+}
+
+func parseWithErrors(src string) (ast.Vertex, []*errors.Error) {
+	var errs []*errors.Error
+	root, _ := parser.Parse([]byte(src), conf.Config{
+		Version:          &version.Version{Major: 8, Minor: 1},
+		ErrorHandlerFunc: func(e *errors.Error) { errs = append(errs, e) },
+	})
+	return root, errs
 }
