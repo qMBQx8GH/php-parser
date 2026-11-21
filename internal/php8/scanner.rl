@@ -142,7 +142,8 @@ func (lex *Lexer) Lex() *token.Token {
                 fbreak;
             };
             '<?' => {
-                lex.addFreeFloatingToken(tkn, token.T_OPEN_TAG, lex.ts, lex.te)
+                lex.extendOpenTagAtEOF()
+lex.addFreeFloatingToken(tkn, token.T_OPEN_TAG, lex.ts, lex.te)
                 fnext php;
             };
             '<?php'i ( [ \t] | newline ) => {

@@ -489,3 +489,36 @@ func parseWithErrors(src string) (ast.Vertex, []*errors.Error) {
 	})
 	return root, errs
 }
+
+// A reference to a static property inside of an array literal: `&self::$x`.
+func TestArrayItemReferenceToStaticProperty(t *testing.T) {
+	codes := []string{
+		"<?php $a = ['k' => &self::$c];",
+		"<?php $a = [&self::$c];",
+		"<?php $a = ['k' => &Foo::$c, &static::$d];",
+		"<?php $a = ['k' => &$c, &$d];",
+		"<?php $a = array('k' => &self::$c);",
+	}
+
+	for _, code := range codes {
+		if _, errs := parseWithErrors(code); len(errs) != 0 {
+			t.Errorf("%q: unexpected errors: %v", code, errs)
+		}
+	}
+}
+
+// PHP accepts the `<?php` open tag at the very end of a file.
+func TestOpenTagAtEndOfFile(t *testing.T) {
+	codes := []string{
+		"<?php\nfoo();\n?>x<?php",
+		"<?php\nfoo();\n?>x<?PHP",
+		"x<?php",
+		"<?php",
+	}
+
+	for _, code := range codes {
+		if _, errs := parseWithErrors(code); len(errs) != 0 {
+			t.Errorf("%q: unexpected errors: %v", code, errs)
+		}
+	}
+}

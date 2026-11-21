@@ -3139,7 +3139,7 @@ array_pair:
                     Val: $1,
                 }
             }
-    |   expr T_DOUBLE_ARROW T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG variable
+    |   expr T_DOUBLE_ARROW ampersand variable
             {
                 $$ = &ast.ExprArrayItem{
                     Position:       yylex.(*Parser).builder.Pos.NewNodesPosition($1, $4),
@@ -3149,7 +3149,7 @@ array_pair:
                     Val:            $4,
                 }
             }
-    |   T_AMPERSAND_FOLLOWED_BY_VAR_OR_VARARG variable
+    |   ampersand variable
             {
                 $$ = &ast.ExprArrayItem{
                     Position:     yylex.(*Parser).builder.Pos.NewTokenNodePosition($1, $2),

@@ -300,3 +300,15 @@ func (lex *Lexer) enumToken() token.ID {
 
 	return token.T_ENUM
 }
+
+// extendOpenTagAtEOF handles `<?php` that is the very end of the file.
+//
+// The scanner rule for the full `<?php` open tag requires a whitespace after it,
+// so at the end of the file only the short `<?` is matched and `php` would be
+// scanned as an identifier. PHP accepts such a tag, so make it a part of the token.
+func (lex *Lexer) extendOpenTagAtEOF() {
+	if lex.te+3 == len(lex.data) && strings.EqualFold(string(lex.data[lex.te:]), "php") {
+		lex.te += 3
+		lex.p += 3
+	}
+}
