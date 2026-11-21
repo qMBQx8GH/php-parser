@@ -443,6 +443,11 @@ func (f *formatter) StmtClassConstList(n *ast.StmtClassConstList) {
 	n.ConstTkn = f.newToken(token.T_CONST, []byte("const"))
 	f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
 
+	if n.Type != nil {
+		n.Type.Accept(f)
+		f.addFreeFloating(token.T_WHITESPACE, []byte(" "))
+	}
+
 	n.SeparatorTkns = f.formatList(n.Consts, ',')
 
 	n.SemiColonTkn = f.newSemicolonTkn()

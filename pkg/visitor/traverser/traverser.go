@@ -188,6 +188,9 @@ func (t *Traverser) StmtClassConstList(n *ast.StmtClassConstList) {
 	for _, nn := range n.Modifiers {
 		nn.Accept(t)
 	}
+	if n.Type != nil {
+		n.Type.Accept(t)
+	}
 	for _, nn := range n.Consts {
 		nn.Accept(t)
 	}

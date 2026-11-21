@@ -23,7 +23,7 @@ var (
 	php7RangeEnd   = &version.Version{Major: 7, Minor: 4}
 
 	php8RangeStart = &version.Version{Major: 8}
-	php8RangeEnd   = &version.Version{Major: 8, Minor: 2}
+	php8RangeEnd   = &version.Version{Major: 8, Minor: 3}
 )
 
 // Parser interface

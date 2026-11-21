@@ -1362,6 +1362,7 @@ func (b *Builder) NewClassConstList(
 	AttrGroups []ast.Vertex,
 	Modifiers []ast.Vertex,
 	ConstTkn *token.Token,
+	Type ast.Vertex,
 	ConstList ast.Vertex,
 	SemiColonTkn *token.Token,
 ) *ast.StmtClassConstList {
@@ -1380,6 +1381,7 @@ func (b *Builder) NewClassConstList(
 		AttrGroups:    AttrGroups,
 		Modifiers:     Modifiers,
 		ConstTkn:      ConstTkn,
+		Type:          Type,
 		Consts:        consts,
 		SeparatorTkns: sepTkns,
 		SemiColonTkn:  SemiColonTkn,

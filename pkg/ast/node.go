@@ -431,10 +431,12 @@ func (n *StmtClass) GetPosition() *position.Position {
 
 // StmtClassConstList node
 type StmtClassConstList struct {
-	Position      *position.Position
-	AttrGroups    []Vertex
-	Modifiers     []Vertex
-	ConstTkn      *token.Token
+	Position   *position.Position
+	AttrGroups []Vertex
+	Modifiers  []Vertex
+	ConstTkn   *token.Token
+	// Type is the type of the constants (typed class constants, PHP 8.3), nil if there is none.
+	Type          Vertex
 	Consts        []Vertex
 	SeparatorTkns []*token.Token
 	SemiColonTkn  *token.Token

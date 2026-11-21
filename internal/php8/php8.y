@@ -1482,7 +1482,9 @@ class_statement:
         optional_attributes variable_modifiers optional_type_without_static property_list ';'
             { $$ = yylex.(*Parser).builder.NewPropertyList($1, $2, $3, $4, $5) }
     |   optional_attributes method_modifiers T_CONST class_const_list ';'
-            { $$ = yylex.(*Parser).builder.NewClassConstList($1, $2, $3, $4, $5) }
+            { $$ = yylex.(*Parser).builder.NewClassConstList($1, $2, $3, nil, $4, $5) }
+    |   optional_attributes method_modifiers T_CONST type_expr class_const_list ';'
+            { $$ = yylex.(*Parser).builder.NewClassConstList($1, $2, $3, $4, $5, $6) }
     |   optional_attributes method_modifiers T_FUNCTION optional_ref identifier_ex '(' parameter_list ')' optional_return_type method_body
             { $$ = yylex.(*Parser).builder.NewClassMethod($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) }
     |   T_USE name_list trait_adaptations

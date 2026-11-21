@@ -270,6 +270,7 @@ func (p *printer) StmtClassConstList(n *ast.StmtClassConstList) {
 	p.printList(n.AttrGroups)
 	p.printList(n.Modifiers)
 	p.printToken(n.ConstTkn, []byte("const"))
+	p.printNode(n.Type)
 	p.printSeparatedList(n.Consts, n.SeparatorTkns, []byte(","))
 	p.printToken(n.SemiColonTkn, []byte(";"))
 }

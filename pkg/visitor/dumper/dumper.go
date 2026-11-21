@@ -420,6 +420,7 @@ func (v *Dumper) StmtClassConstList(n *ast.StmtClassConstList) {
 	v.dumpVertexList("AttrGroups", n.AttrGroups)
 	v.dumpVertexList("Modifiers", n.Modifiers)
 	v.dumpToken("ConstTkn", n.ConstTkn)
+	v.dumpVertex("Type", n.Type)
 	v.dumpVertexList("Consts", n.Consts)
 	v.dumpTokenList("SeparatorTkns", n.SeparatorTkns)
 	v.dumpToken("SemiColonTkn", n.SemiColonTkn)
