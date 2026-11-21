@@ -1825,7 +1825,14 @@ non_empty_for_exprs:
 anonymous_class:
         optional_attributes
         T_CLASS ctor_arguments extends_from implements_list '{' class_statement_list '}'
-            { $$ = yylex.(*Parser).builder.NewAnonClass($1, $2, $3, $4, $5, $6, $7, $8) }
+            { $$ = yylex.(*Parser).builder.NewAnonClass($1, nil, $2, $3, $4, $5, $6, $7, $8) }
+    |   optional_attributes
+        T_READONLY T_CLASS ctor_arguments extends_from implements_list '{' class_statement_list '}'
+            {
+                // Anonymous readonly class (PHP 8.3).
+                readonly := yylex.(*Parser).builder.NewIdentifier($2)
+                $$ = yylex.(*Parser).builder.NewAnonClass($1, []ast.Vertex{readonly}, $3, $4, $5, $6, $7, $8, $9)
+            }
 ;
 
 new_expr:
@@ -2914,6 +2921,16 @@ class_constant:
                         IdentifierTkn: $3,
                         Value:         $3.Value,
                     },
+                }
+            }
+    |   class_name_or_var T_PAAMAYIM_NEKUDOTAYIM '{' expr '}'
+            {
+                // Dynamic class constant fetch (PHP 8.3): C::{$name}, Const is *ast.ExprBrackets.
+                $$ = &ast.ExprClassConstFetch{
+                    Position: yylex.(*Parser).builder.Pos.NewNodeTokenPosition($1, $5),
+                    Class:          $1,
+                    DoubleColonTkn: $2,
+                    Const:          yylex.(*Parser).builder.NewBracket($3, $4, $5),
                 }
             }
 ;

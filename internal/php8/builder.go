@@ -1094,6 +1094,7 @@ func (b *Builder) NewClass(
 
 func (b *Builder) NewAnonClass(
 	AttrGroups []ast.Vertex,
+	Modifiers []ast.Vertex,
 	ClassTkn *token.Token,
 
 	ArgList ast.Vertex,
@@ -1107,7 +1108,7 @@ func (b *Builder) NewAnonClass(
 ) *ast.StmtClass {
 	class := b.NewClass(
 		AttrGroups,
-		nil, // Modifiers
+		Modifiers,
 		ClassTkn,
 		nil, // Name
 		ExtendsFrom,
